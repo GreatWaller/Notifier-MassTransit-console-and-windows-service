@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Shared.Cache;
 using System;
 using System.Diagnostics;
 using System.Linq;
@@ -38,8 +39,9 @@ namespace Notifier
                         //cfg.AddRequestClient<IsItTime>();
                     });
 
-                    services.AddHostedService<MassTransitConsoleHostedService>();
-                    //services.AddHostedService<CheckTheTimeService>();
+                    services.AddTransient<ICacheService, CacheService>();
+                    //services.AddHostedService<MassTransitConsoleHostedService>();
+                    services.AddHostedService<TimeService>();
                 })
                 .ConfigureLogging((hostingContext, logging) =>
                 {

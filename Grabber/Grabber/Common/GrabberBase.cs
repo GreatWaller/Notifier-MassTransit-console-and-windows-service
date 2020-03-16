@@ -1,6 +1,6 @@
-﻿using Grabber.Cache;
-using MassTransit;
+﻿using MassTransit;
 using Microsoft.Extensions.Logging;
+using Shared.Cache;
 using Shared.Common;
 using Shared.Entities;
 using Shared.Events;

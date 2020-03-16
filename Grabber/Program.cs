@@ -1,9 +1,9 @@
-﻿using Grabber.Cache;
-using Grabber.Grabber;
+﻿using Grabber.Grabber;
 using MassTransit;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Console;
+using Shared.Cache;
 using Shared.Entities;
 using Shared.Events;
 using System;

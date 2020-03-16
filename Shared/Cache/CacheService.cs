@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Grabber.Cache
+namespace Shared.Cache
 {
     public class CacheService : ICacheService
     {
