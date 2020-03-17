@@ -41,9 +41,9 @@ namespace Notifier
 
         public async Task StartAsync(CancellationToken cancellationToken)
         {
-            InitTimeCircle();
             _logger.LogInformation("Starting bus");
             await _bus.StartAsync(cancellationToken).ConfigureAwait(false);
+            InitTimeCircle();
         }
 
         public Task StopAsync(CancellationToken cancellationToken)
@@ -121,19 +121,21 @@ namespace Notifier
             for (int i = 0; i < count; i++)
             {
                 NotificationEvent message;
-                notificationEventQueue.TryDequeue(out message);
-                switch (message.Type?.ToLower())
+                if (notificationEventQueue.TryDequeue(out message))
                 {
-                    case "face":
-                        notification.FaceObjectList.Add(message.Entity as Face);
-                        break;
-                    case "person":
-                        notification.PersonObjectList.Add(message.Entity as Person);
-                        break;
-                    default:
-                        break;
+                    //暂时不判空，方便测试
+                    switch (message.Type.ToLower())
+                    {
+                        case "face":
+                            notification.FaceObjectList.Add(message.Entity as Face);
+                            break;
+                        case "person":
+                            notification.PersonObjectList.Add(message.Entity as Person);
+                            break;
+                        default:
+                            break;
+                    }
                 }
-
             }
             return notification;
         }

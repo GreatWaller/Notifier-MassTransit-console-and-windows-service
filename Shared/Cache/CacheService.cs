@@ -45,11 +45,14 @@ namespace Shared.Cache
                 ReportInterval = 8
             };
             var list = new List<Subscribe> {subscribe,subscribe2,subscribe3};
-            var options = new DistributedCacheEntryOptions()
-                    .SetSlidingExpiration(TimeSpan.FromSeconds(60));
-            _cache.Set("test", Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(list)), options);
-
-            list = JsonConvert.DeserializeObject<List<Subscribe>>(ConvertFromByteArray(_cache.Get("test")));
+            //var options = new DistributedCacheEntryOptions()
+            //        .SetSlidingExpiration(TimeSpan.FromSeconds(600));
+            //_cache.Set("test", Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(list)), options);
+            var data = _cache.Get("test");
+            if (data!=null)
+            {
+                list = JsonConvert.DeserializeObject<List<Subscribe>>(ConvertFromByteArray(data));
+            }
             return list;
         }
 

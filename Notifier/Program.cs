@@ -36,7 +36,7 @@ namespace Notifier
                     services.AddStackExchangeRedisCache(options =>
                     {
                         options.Configuration = "localhost";
-                        options.InstanceName = "NotifierInstance";
+                        //options.InstanceName = "NotifierInstance";
                     });
 
                     services.AddMassTransit(cfg =>
