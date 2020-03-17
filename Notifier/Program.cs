@@ -32,6 +32,13 @@ namespace Notifier
                 {
                     services.Configure<AppConfig>(hostContext.Configuration.GetSection("AppConfig"));
 
+                    //redis
+                    services.AddStackExchangeRedisCache(options =>
+                    {
+                        options.Configuration = "localhost";
+                        options.InstanceName = "NotifierInstance";
+                    });
+
                     services.AddMassTransit(cfg =>
                     {
                         cfg.AddConsumer<Notifier>();

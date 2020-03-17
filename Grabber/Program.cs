@@ -17,6 +17,11 @@ namespace Grabber
         {
             IServiceCollection serviceCollection = new ServiceCollection();
             serviceCollection.AddLogging(configure => configure.AddConsole());
+            serviceCollection.AddStackExchangeRedisCache(options =>
+            {
+                options.Configuration = "localhost";
+                options.InstanceName = "GrabberInstance";
+            });
             serviceCollection.AddTransient<ICacheService, CacheService>();
 
             serviceCollection.AddMassTransit(cfg =>

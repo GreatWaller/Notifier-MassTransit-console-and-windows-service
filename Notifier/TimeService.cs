@@ -1,4 +1,5 @@
 ﻿using MassTransit;
+using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Shared.Cache;
@@ -17,6 +18,7 @@ namespace Notifier
     {
         private readonly ILogger _logger;
         private readonly ICacheService _cacheService;
+        private readonly IDistributedCache _cache;
         private readonly IBusControl _bus;
         NotificationController controller = NotificationController.GetInstance();
         Timer _timer;
@@ -25,11 +27,13 @@ namespace Notifier
 
         public TimeService(ILoggerFactory loggerFactory, 
             ICacheService cacheService,
+            IDistributedCache cache,
             IBusControl bus)
         {
             _logger = loggerFactory.CreateLogger<TimeService>();
             _cacheService = cacheService;
             _bus = bus;
+            _cache = cache;
         }
 
         public async Task StartAsync(CancellationToken cancellationToken)
@@ -49,7 +53,8 @@ namespace Notifier
         private void InitTimeCircle()
         {
             //get all subscribes, 以确定数组长度：单位时间为最小公约数，长度为最小公倍数/单位时间
-            //var subscribes=
+            var subscribes = _cacheService.GetAllSubscribes();
+
             var count = 2;
             timeCircle = new TimeNode[count];
             //
