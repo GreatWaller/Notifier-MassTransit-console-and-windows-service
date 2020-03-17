@@ -7,6 +7,7 @@ using Shared.Common;
 using Shared.Entities;
 using Shared.Events.Common;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading;
@@ -23,6 +24,7 @@ namespace Notifier
         NotificationController controller = NotificationController.GetInstance();
         Timer _timer;
         TimeNode[] timeCircle;
+        int count;
         int location;
 
         public TimeService(ILoggerFactory loggerFactory, 
@@ -54,24 +56,39 @@ namespace Notifier
         {
             //get all subscribes, 以确定数组长度：单位时间为最小公约数，长度为最小公倍数/单位时间
             var subscribes = _cacheService.GetAllSubscribes();
+            // 3/10
+            var lcm = 6;
+            var gcd = 3;
 
-            var count = 2;
+            count = lcm/gcd;
             timeCircle = new TimeNode[count];
-            //
-            for (int i = 0; i < count; i++)
+            for (int j = 0; j < count; j++)
             {
-                timeCircle[i] = new TimeNode();
-                timeCircle[i].Subscribes.Add("subscribeid");
+                timeCircle[j] = new TimeNode();
+                for (int i = 0; i < subscribes.Count; i++)
+                {
+                    if (subscribes[i].ReportInterval == 0)
+                    {
+                        subscribes[i].ReportInterval = 5;
+                    }
+                    //初始位置不挂载
+                    if ((j + 1) * gcd % subscribes[i].ReportInterval == 0)
+                    {
+                        timeCircle[j].Subscribes.Add(subscribes[i].SubscribeID);
+                    }
+                }
             }
+            
 
-            _timer = new Timer(Tick, null, TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(5));
+            _timer = new Timer(Tick, null, TimeSpan.FromSeconds(gcd), TimeSpan.FromSeconds(gcd));
         }
 
         //拨动时间轮
         private void Tick(object source)
         {
+            _logger.LogInformation($"location is {location}");
             location += 1;
-            location = location % 2;
+            location = location % count;
             HandleNode(timeCircle[location]);
         }
 
@@ -87,7 +104,7 @@ namespace Notifier
         // 准备每个订阅：从字典中去取
         private Notification PrepareNotificationBySubscribeId(string subscribeId)
         {
-            Queue<NotificationEvent> notificationEventQueue;
+            ConcurrentQueue<NotificationEvent> notificationEventQueue;
             if (!controller.NotificationDictionary.TryGetValue(subscribeId, out notificationEventQueue))
             {
                 return null;
@@ -101,7 +118,8 @@ namespace Notifier
             //依据类型存入对应字段
             for (int i = 0; i < count; i++)
             {
-                var message = notificationEventQueue.Dequeue();
+                NotificationEvent message;
+                notificationEventQueue.TryDequeue(out message);
                 switch (message.Type?.ToLower())
                 {
                     case "face":
@@ -123,7 +141,7 @@ namespace Notifier
         {
             if (notification != null)
             {
-                _logger.LogInformation($"do {notification.FaceObjectList.Count} post task");
+                _logger.LogError($"do {notification.FaceObjectList.Count} post task");
             }
         }
     }

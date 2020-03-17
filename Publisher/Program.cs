@@ -36,14 +36,18 @@ namespace Publisher
                 var orderReceivedId = Guid.NewGuid();
                 if (key.Key == ConsoleKey.Enter)
                 {
-                    var faceEvent = new FaceEvent
+                    for (int i = 0; i < 1000; i++)
                     {
-                        ResourceURI = orderReceivedId.ToString(),
-                        Entity = new Face { Id = 1 },
-                        DeviceId = "deviceid"
-                    };
-                    await bus.Publish(faceEvent)
-                        .ConfigureAwait(false);
+                        var faceEvent = new FaceEvent
+                        {
+                            ResourceURI = orderReceivedId.ToString(),
+                            Entity = new Face { Id = 1 },
+                            DeviceId = "deviceid"
+                        };
+                        await bus.Publish(faceEvent)
+                            .ConfigureAwait(false);
+                    }
+                    
                     Console.WriteLine($"Published CreateEventMessage Event with ResourceURI {orderReceivedId}.");
                 }
                 else

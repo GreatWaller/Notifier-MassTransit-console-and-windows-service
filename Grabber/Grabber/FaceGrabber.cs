@@ -19,7 +19,7 @@ namespace Grabber.Grabber
         {
             log.LogInformation("i am from face grabber");
             var device = _cacheService.GetDeviceById(createEvent.DeviceId);
-            if (subscribe.ResourceURI.Contains(device.DeviceId)
+            if (subscribe.ResourceURI.Equals(device.DeviceId)
                 || subscribe.ResourceURI.Contains(device.TollgateId)
                 || subscribe.ResourceURI.Contains(device.LaneId))
             {

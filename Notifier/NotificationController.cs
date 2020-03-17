@@ -26,8 +26,8 @@ namespace Notifier
         /// <summary>
         /// key: subscribeId;
         /// </summary>
-        public ConcurrentDictionary<string, Queue<NotificationEvent>> NotificationDictionary { get; set; }
-            = new ConcurrentDictionary<string, Queue<NotificationEvent>>();
+        public ConcurrentDictionary<string, ConcurrentQueue<NotificationEvent>> NotificationDictionary { get; set; }
+            = new ConcurrentDictionary<string, ConcurrentQueue<NotificationEvent>>();
         public int Limatation { get; set; } = 1;
 
         static NotificationController()

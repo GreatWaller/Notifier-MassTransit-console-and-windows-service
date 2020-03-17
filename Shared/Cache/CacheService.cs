@@ -36,7 +36,7 @@ namespace Shared.Cache
             {
                 SubscribeID = "subscribeid2",
                 ResourceURI = "deviceid2",
-                ReportInterval=10
+                ReportInterval=6
             };
             var list = new List<Subscribe> {subscribe,subscribe2};
             var options = new DistributedCacheEntryOptions()
