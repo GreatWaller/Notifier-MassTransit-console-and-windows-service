@@ -9,6 +9,7 @@ using Shared.Events.Common;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -56,9 +57,10 @@ namespace Notifier
         {
             //get all subscribes, 以确定数组长度：单位时间为最小公约数，长度为最小公倍数/单位时间
             var subscribes = _cacheService.GetAllSubscribes();
+            var intervalList = subscribes.Where(p => p.ReportInterval != 0).Select(p => p.ReportInterval).ToList();
             // 3/10
-            var lcm = 6;
-            var gcd = 3;
+            var gcd = Gcd(intervalList);
+            var lcm = Lcm(intervalList);
 
             count = lcm/gcd;
             timeCircle = new TimeNode[count];
@@ -69,7 +71,7 @@ namespace Notifier
                 {
                     if (subscribes[i].ReportInterval == 0)
                     {
-                        subscribes[i].ReportInterval = 5;
+                        subscribes[i].ReportInterval = lcm;
                     }
                     //初始位置不挂载
                     if ((j + 1) * gcd % subscribes[i].ReportInterval == 0)
@@ -143,6 +145,58 @@ namespace Notifier
             {
                 _logger.LogError($"do {notification.FaceObjectList.Count} post task");
             }
+        }
+
+        //gcd
+        int Gcd(List<int> intList)
+        {
+            intList.Sort();
+            int a = intList[0];
+            int b = 1;
+            for (int i = 1; i < intList.Count; i++)
+            {
+                b = intList[i];
+                a = gcd(b, a);
+                if (a==1)
+                {
+                    break;
+                }
+            }
+            return a;
+        }
+        int gcd(int a, int b)           //自定义函数求最大公约数
+        {
+            int temp;                   //整形零时变量
+            if (a < b)                     //a<b 则交换 
+            {
+                temp = a; a = b; b = temp;
+            }
+            while (b != 0)
+            {
+                temp = a % b;              //a中大数除以b中小数循环取余，直到b及余数为0
+                a = b;
+                b = temp;
+            }
+            return a;                  //返回最大公约数到调用函数处
+        }
+
+        int Lcm(List<int> intList)
+        {
+            intList.Sort();
+            int a = intList[0];
+            int b;
+            for (int i = 1; i < intList.Count; i++)
+            {
+                b = intList[i];
+                a = lcm(b,a);
+            }
+            return a;
+        }
+        int lcm(int a, int b)
+        {
+            int temp;
+            temp = gcd(a, b);
+            return a * b / temp;
         }
     }
 

@@ -30,15 +30,21 @@ namespace Shared.Cache
             {
                 SubscribeID = "subscribeid",
                 ResourceURI = "deviceid",
-                ReportInterval=3
+                ReportInterval=2
             };
             var subscribe2 = new Subscribe
             {
                 SubscribeID = "subscribeid2",
                 ResourceURI = "deviceid2",
-                ReportInterval=6
+                ReportInterval=5
             };
-            var list = new List<Subscribe> {subscribe,subscribe2};
+            var subscribe3 = new Subscribe
+            {
+                SubscribeID = "subscribeid3",
+                ResourceURI = "deviceid3",
+                ReportInterval = 8
+            };
+            var list = new List<Subscribe> {subscribe,subscribe2,subscribe3};
             var options = new DistributedCacheEntryOptions()
                     .SetSlidingExpiration(TimeSpan.FromSeconds(60));
             _cache.Set("test", Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(list)), options);
