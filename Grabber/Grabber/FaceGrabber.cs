@@ -15,7 +15,7 @@ namespace Grabber.Grabber
         {
         }
 
-        public override bool IsSubscribed(FaceEvent createEvent, Subscribe subscribe)
+        public override bool IsSubscribed(FaceEvent createEvent, Shared.Common.Subscribe subscribe)
         {
             log.LogInformation("i am from face grabber");
             var device = _cacheService.GetDeviceById(createEvent.DeviceId);
